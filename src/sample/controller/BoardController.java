@@ -1,6 +1,7 @@
 package sample.controller;
 
 import sample.model.BoardModel;
+import sample.view.ChangeTurnObserver;
 
 public class BoardController {
 
@@ -11,10 +12,14 @@ public class BoardController {
     }
 
     public void addPiece(double x, double y) {
-        model.addPieces(x, y);
+        model.addDoublePieces(x, y);
     }
 
-    public boolean getTern() {
+    public boolean getTurn() {
         return model.getTurn();
+    }
+
+    public void addObserver(ChangeTurnObserver observer) {
+        model.addObserver(observer);
     }
 }

@@ -2,6 +2,7 @@ package sample;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
@@ -15,7 +16,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        HBox root = new HBox();
+        Group root = new Group();
         BoardView boardView = new BoardView();
         InfoView infoView = new InfoView(boardView);
         root.getChildren().add(boardView);

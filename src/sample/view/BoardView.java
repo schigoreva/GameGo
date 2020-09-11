@@ -8,7 +8,7 @@ import sample.model.BoardModel;
 
 import static sample.Preferences.*;
 
-public class BoardView extends Group {
+public class BoardView extends Group implements ChangeTurnObserver {
 
     private BoardController controller;
     private BoardModel model;

@@ -2,10 +2,14 @@ package sample.model;
 
 import sample.view.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static sample.Preferences.*;
 import static sample.view.PieceType.*;
 
 public class BoardModel {
+    // Массив соседей
     private static final int[][] neighbours = {
             {-1, 0},
             {1, 0},
@@ -15,7 +19,7 @@ public class BoardModel {
 
     private PieceView[][] board = new PieceView[COUNT_NODES][COUNT_NODES];
     private PieceType[][] type = new PieceType[COUNT_NODES][COUNT_NODES];
-    private BoardView view;
+    private List<ChangeTurnObserver> changeTurnObserverList;
     private boolean turn = true;
 
     public BoardModel() {
@@ -24,16 +28,29 @@ public class BoardModel {
                 type[i][j] = NONE;
             }
         }
+        changeTurnObserverList = new ArrayList<>();
     }
 
-    public void addObserver(BoardView view) {
-        this.view = view;
+    //Добавление слушателя
+    public void addObserver(ChangeTurnObserver view) {
+        changeTurnObserverList.add(view);
     }
 
-    public void addPieces(double x, double y) {
-        int cellX = (int) Math.floor((x + CELL_SIZE / 2.0) / CELL_SIZE);
-        int cellY = (int) Math.floor((y + CELL_SIZE / 2.0) / CELL_SIZE);
-        if (type[cellX][cellY] == NONE && checkNeighbours(cellX, cellY)) {
+    //Оповещение слушателей
+    private void notifyObserver() {
+        for (ChangeTurnObserver observer : changeTurnObserverList) {
+            observer.updateBoard();
+        }
+    }
+
+    //Проверка хода на возможность
+    boolean checkValidMove(int cellX, int cellY) {
+        return type[cellX][cellY] == NONE && checkNeighbours(cellX, cellY);
+    }
+
+    //Выполнение хода
+    void addPieces(int cellX, int cellY) {
+        if (checkValidMove(cellX, cellY)) {
             if (!turn) {
                 board[cellX][cellY] = new WhitePieceView(cellX, cellY);
                 type[cellX][cellY] = WHITE;
@@ -43,10 +60,18 @@ public class BoardModel {
             }
             changeTurn();
             checkBoard();
-            view.updateBoard();
+            notifyObserver();
         }
     }
 
+    //Перевод из пикселей в коориданту клетки с округлением к ближайшей
+    public void addDoublePieces(double x, double y) {
+        int cellX = (int) Math.floor((x + CELL_SIZE / 2.0) / CELL_SIZE);
+        int cellY = (int) Math.floor((y + CELL_SIZE / 2.0) / CELL_SIZE);
+        addPieces(cellX, cellY);
+    }
+
+    //Проверка соседей на блокировку клетки
     private boolean checkNeighbours(int x, int y) {
         for (int[] to : neighbours) {
             int toX = x + to[0];
@@ -60,10 +85,12 @@ public class BoardModel {
         return false;
     }
 
+    //Цвет текущего игрока
     private PieceType getCurrentColor() {
         return turn ? BLACK : WHITE;
     }
 
+    //Проверка компоненты связности на съеденность
     private boolean checkComponent(int x, int y, boolean[][] used, PieceType t) {
         boolean alive = false;
         used[x][y] = true;
@@ -83,6 +110,7 @@ public class BoardModel {
         return alive;
     }
 
+    //Поедание компоненты связности
     private void clearComponent(int x, int y, boolean[][] used, PieceType t) {
         used[x][y] = true;
         board[x][y] = null;
@@ -96,6 +124,7 @@ public class BoardModel {
         }
     }
 
+    //Проверка доски на появление съеденных компонент связности
     private void checkBoard() {
         boolean[][] used = new boolean[COUNT_NODES][COUNT_NODES];
         boolean[][] usedClear = new boolean[COUNT_NODES][COUNT_NODES];
@@ -110,6 +139,7 @@ public class BoardModel {
         }
     }
 
+    //Смена хода
     private void changeTurn() {
         turn = !turn;
     }

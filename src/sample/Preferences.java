@@ -9,5 +9,5 @@ public class Preferences {
     public static final int PIECE_RADIUS = 20;
     public static final int INFO_WIDTH = 300;
     public static final String BLACK_TURN_TEXT = "Ход черных";
-    public static final String WHITE_TURN_TEXT = "Ход бедых";
+    public static final String WHITE_TURN_TEXT = "Ход белых";
 }
