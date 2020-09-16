@@ -1,4 +1,4 @@
-package sample;
+package main.java.sample;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -7,10 +7,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import sample.view.BoardView;
-import sample.view.InfoView;
+import main.java.sample.view.BoardView;
+import main.java.sample.view.InfoView;
 
-import static sample.Preferences.*;
+import static main.java.sample.Preferences.*;
 
 public class Main extends Application {
 
